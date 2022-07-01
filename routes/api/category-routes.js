@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { response } = require('express');
 const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
@@ -28,11 +29,23 @@ router.post('/', (req, res) => {
   .catch((err) => res.status(500).json(err))
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   // update a category by its `id` value
+  updateTarget = await Category.findByPk(req.params.id)
+  updateTarget.set(
+    req.body
+  )
+  updateTarget.save()
+  return res.json(updateTarget)
 });
 
 router.delete('/:id', (req, res) => {
+  Category.destroy({
+    where: {
+     id: req.params.id
+    }
+  }).then((response) => res.json(response))
+  .catch((err) => res.status(500).json(err))
   // delete a category by its `id` value
 });
 
